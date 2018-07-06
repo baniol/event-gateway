@@ -1,10 +1,16 @@
-resource "aws_ecs_cluster" "main" {
+data "aws_caller_identity" "current" {}
+
+resource "aws_ecs_cluster" "event-gateway" {
   name = "eg-ecs-cluster"
 }
 
 resource "aws_cloudwatch_log_group" "eg" {
   name = "eg-ecs-group"
+  tags = "${var.tags}"
 }
+
+# TODO
+# "command": ["-db-hosts", "${module.etcd.etcd_clients}", "-log-level", "${var.log_level}"],
 
 resource "aws_ecs_task_definition" "eg" {
   family                   = "eg"
@@ -19,7 +25,7 @@ resource "aws_ecs_task_definition" "eg" {
   {
     "name": "event-gateway",
     "image": "${var.eg_image}",
-    "command": ["-db-hosts", "${module.etcd.etcd_clients}", "-log-level", "${var.log_level}"],
+    "command": ["${join("\",\"", var.command_list)}"],
     "networkMode": "awsvpc",  
     "portMappings": [
       {
@@ -44,80 +50,60 @@ EOF
 
 resource "aws_ecs_service" "config" {
   name            = "eg-config"
-  cluster         = "${aws_ecs_cluster.main.id}"
+  cluster         = "${aws_ecs_cluster.event-gateway.id}"
   task_definition = "${aws_ecs_task_definition.eg.arn}"
   desired_count   = "${var.app_count}"
   launch_type     = "FARGATE"
 
   network_configuration {
-    security_groups = ["${aws_security_group.config-service-sg.id}"]
-    subnets         = ["${aws_subnet.private.*.id}"]
+    security_groups = ["${aws_security_group.sg-container-ingress.id}"]
+    subnets         = ["${module.vpc.private_subnets}"]
   }
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.config.id}"
+    target_group_arn = "${module.alb-config.target_group_arns[0]}"
     container_name   = "event-gateway"
     container_port   = "${var.config_port}"
   }
 
   depends_on = [
-    "aws_lb_listener.config",
+    "module.alb-config",
   ]
 }
 
 resource "aws_ecs_service" "events" {
   name            = "eg-events"
-  cluster         = "${aws_ecs_cluster.main.id}"
+  cluster         = "${aws_ecs_cluster.event-gateway.id}"
   task_definition = "${aws_ecs_task_definition.eg.arn}"
   desired_count   = "${var.app_count}"
   launch_type     = "FARGATE"
 
   network_configuration {
-    security_groups = ["${aws_security_group.event-service-sg.id}"]
-    subnets         = ["${aws_subnet.private.*.id}"]
+    security_groups = ["${aws_security_group.sg-container-ingress.id}"]
+    subnets         = ["${module.vpc.private_subnets}"]
   }
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.events.id}"
+    target_group_arn = "${module.alb-events.target_group_arns[0]}"
     container_name   = "event-gateway"
     container_port   = "${var.events_port}"
   }
 
   depends_on = [
-    "aws_lb_listener.events",
+    "module.alb-events",
   ]
 }
 
-resource "aws_security_group" "config-service-sg" {
-  name        = "eg-config-service"
-  description = "Allow only into config API"
-  vpc_id      = "${aws_vpc.event-gateway.id}"
-
-  ingress {
-    protocol        = "tcp"
-    from_port       = "${var.config_port}"
-    to_port         = "${var.config_port}"
-    security_groups = ["${aws_security_group.lb.id}"]
-  }
-
-  egress {
-    protocol    = "-1"
-    from_port   = 0
-    to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "event-service-sg" {
+resource "aws_security_group" "sg-container-ingress" {
   name        = "eg-event-service"
   description = "Allow only into events API"
-  vpc_id      = "${aws_vpc.event-gateway.id}"
+  vpc_id      = "${module.vpc.vpc_id}"
 
   ingress {
     protocol        = "tcp"
     from_port       = "${var.events_port}"
-    to_port         = "${var.events_port}"
-    security_groups = ["${aws_security_group.lb.id}"]
+    to_port         = "${var.config_port}"
+    security_groups = ["${aws_security_group.alb.id}"]
   }
 
   egress {
@@ -126,4 +112,6 @@ resource "aws_security_group" "event-service-sg" {
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = "${var.tags}"
 }

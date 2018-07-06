@@ -1,6 +1,12 @@
+#TODO - remove?
 variable "aws_region" {
   description = "AWS region to the stack"
   default     = "us-east-1"
+}
+
+variable "command_list" {
+  type    = "list"
+  default = ["-log-level", "debug"]
 }
 
 variable "public_subnets_count" {
@@ -43,11 +49,6 @@ variable "fargate_memory" {
   default     = 512
 }
 
-variable "log_level" {
-  description = "Event Gateway app log level"
-  default     = "debug"
-}
-
 variable "cluster_domain" {
   description = "Private domain for etcd discovery"
   default     = "etcd-cluster"
@@ -56,4 +57,24 @@ variable "cluster_domain" {
 variable "etcd_instance_type" {
   description = "etcd nodes type"
   default     = "t2.micro"
+}
+
+variable "tags" {
+  type    = "map"
+  default = {}
+}
+
+variable "events_alb_name" {
+  description = ""
+  default     = "alb-events"
+}
+
+variable "config_alb_name" {
+  description = ""
+  default     = "alb-config"
+}
+
+variable "eg_vpc_name" {
+  description = ""
+  default     = "eg-vpc"
 }
