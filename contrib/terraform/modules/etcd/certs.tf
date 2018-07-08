@@ -111,7 +111,8 @@ data "ignition_file" "etcd_peer_crt" {
 # -----
 
 module "etcd_certs" {
-  source = "./modules/tls/etcd/signed"
+  # source = "./modules/tls/etcd/signed"
+  source = "github.com/coreos/tectonic-installer//modules/tls/etcd/signed?ref=0a22c73d39f67ba4bb99106a9e72322a47179736"
 
   etcd_ca_cert_path     = "/dev/null"
   etcd_cert_dns_names   = "${data.template_file.etcd_hostname_list.*.rendered}"
