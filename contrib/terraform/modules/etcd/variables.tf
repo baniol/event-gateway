@@ -66,3 +66,8 @@ variable "root_volume_type" {
 variable "event-gateway-state" {
   default = "event-gateway-state"
 }
+
+variable "tags" {
+  type    = "map"
+  default = {}
+}

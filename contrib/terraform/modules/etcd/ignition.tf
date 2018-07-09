@@ -24,7 +24,7 @@ EOF
 }
 
 data "template_file" "etcd_hostname_list" {
-  count = 3
+  count = "${var.instance_count}"
 
   template = "${var.cluster_name}-etcd-${count.index}.${var.base_domain}"
 }

@@ -7,7 +7,7 @@ resource "aws_route53_zone" "etcd_priv" {
   vpc_id  = "${var.vpc_id}"
   comment = "Managed by Terraform"
 
-  #todo tags
+  tags = "${var.tags}"
 }
 
 resource "aws_route53_record" "etcd_a_nodes" {
