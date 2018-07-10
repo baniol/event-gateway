@@ -37,10 +37,11 @@ resource "aws_security_group" "etcd" {
   vpc_id = "${var.vpc_id}"
 
   ingress {
-    protocol  = "tcp"
-    from_port = "2379"
-    to_port   = "2380"
-    self      = true
+    protocol        = "tcp"
+    from_port       = "2379"
+    to_port         = "2380"
+    self            = true
+    security_groups = ["${var.security_groups}"]
   }
 
   egress {
@@ -49,4 +50,17 @@ resource "aws_security_group" "etcd" {
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+# If bastion instance is present in a public subnet
+resource "aws_security_group_rule" "allow_ssh" {
+  count = "${var.bastion_enabled ? 1 : 0}"
+
+  type        = "ingress"
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.etcd.id}"
 }

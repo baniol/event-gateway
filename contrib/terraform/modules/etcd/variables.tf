@@ -2,6 +2,12 @@ variable "cluster_name" {
   default = "event-gateway"
 }
 
+variable "security_groups" {
+  description = ""
+  type = "list"
+}
+
+
 variable "vpc_id" {
   description = ""
 }
@@ -70,4 +76,13 @@ variable "event-gateway-state" {
 variable "tags" {
   type    = "map"
   default = {}
+}
+
+variable "bastion_enabled" {
+  default = false
+}
+
+variable "bastion_subnet" {
+  description = "..."
+  default     = 0
 }

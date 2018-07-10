@@ -78,3 +78,7 @@ variable "eg_vpc_name" {
   description = ""
   default     = "eg-vpc"
 }
+
+variable "bastion_enabled" {
+  default = false
+}
