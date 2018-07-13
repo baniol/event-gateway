@@ -5,9 +5,12 @@ provider "aws" {
 }
 
 module "event-gateway" {
-  source          = "./modules/event-gateway"
-  bastion_enabled = false
-  command_list    = ["-db-hosts", "event-gateway-etcd-0.etcd:2379,event-gateway-etcd-1.etcd:2379,event-gateway-etcd-2.etcd:2379", "-log-level", "debug"]
+  source = "./modules/event-gateway"
+
+  # bastion_enabled = true
+  # tls_enabled     = true
+  # ssh_key      = "eg-key"
+  command_list = ["-db-hosts", "event-gateway-etcd-0.etcd:2379,event-gateway-etcd-1.etcd:2379,event-gateway-etcd-2.etcd:2379", "-log-level", "debug"]
 
   tags = {
     Application = "event-gateway"

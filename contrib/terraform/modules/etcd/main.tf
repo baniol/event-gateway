@@ -3,8 +3,7 @@ data "aws_caller_identity" "current" {}
 module "etcd" {
   source = "github.com/coreos/tectonic-installer//modules/aws/etcd?ref=0a22c73d39f67ba4bb99106a9e72322a47179736"
 
-  base_domain = "${var.base_domain}"
-
+  base_domain             = "${var.base_domain}"
   cluster_id              = "${var.cluster_name}"
   cluster_name            = "${var.cluster_name}"
   container_image         = "${var.container_image}"
@@ -21,13 +20,9 @@ module "etcd" {
   root_volume_type        = "${var.root_volume_type}"
   s3_bucket               = "${aws_s3_bucket.eg-etcd-ignition.id}"
   sg_ids                  = "${aws_security_group.etcd.*.id}"
-
-  # TODO generate new ke ?
-  ssh_key = "${var.ssh_key}"
-  subnets = "${var.subnets}"
-
-  # TODO try with enabled
-  tls_enabled = "${var.tls_enabled}"
+  ssh_key                 = "${var.ssh_key}"
+  subnets                 = "${var.subnets}"
+  tls_enabled             = "${var.tls_enabled}"
 }
 
 module "container_linux" {
@@ -35,6 +30,17 @@ module "container_linux" {
 
   release_channel = "stable"
   release_version = "latest"
+}
+
+module "etcd_certs" {
+  source = "github.com/coreos/tectonic-installer//modules/tls/etcd/signed?ref=0a22c73d39f67ba4bb99106a9e72322a47179736"
+
+  etcd_ca_cert_path     = "/dev/null"
+  etcd_cert_dns_names   = "${data.template_file.etcd_hostname_list.*.rendered}"
+  etcd_client_cert_path = "/dev/null"
+  etcd_client_key_path  = "/dev/null"
+  self_signed           = "true"
+  service_cidr          = "10.3.0.0/16"
 }
 
 resource "aws_s3_bucket" "eg-etcd-ignition" {

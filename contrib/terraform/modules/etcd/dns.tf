@@ -1,7 +1,3 @@
-# data "aws_route53_zone" "etcd" {
-#   name = "${var.base_domain}"
-# }
-
 resource "aws_route53_zone" "etcd_priv" {
   name    = "${var.base_domain}"
   vpc_id  = "${var.vpc_id}"
@@ -11,7 +7,7 @@ resource "aws_route53_zone" "etcd_priv" {
 }
 
 resource "aws_route53_record" "etcd_a_nodes" {
-  count   = "${var.etcd_count}"
+  count   = "${var.instance_count}"
   type    = "A"
   ttl     = "60"
   zone_id = "${aws_route53_zone.etcd_priv.zone_id}"

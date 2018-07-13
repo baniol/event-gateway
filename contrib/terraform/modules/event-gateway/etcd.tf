@@ -12,4 +12,6 @@ module "etcd" {
   ssh_key          = "${var.ssh_key}"
   vpc_id           = "${module.vpc.vpc_id}"
   tags             = "${var.tags}"
+  tls_enabled      = "${var.tls_enabled}"
+  instance_count   = "${var.etcd_instance_count}"
 }

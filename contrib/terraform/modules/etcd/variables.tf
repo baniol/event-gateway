@@ -1,3 +1,4 @@
+# TODO cleanup defaults
 variable "cluster_name" {
   default = "event-gateway"
 }
@@ -15,9 +16,7 @@ variable "base_domain" {
   default = "etcd"
 }
 
-variable "instance_count" {
-  default = 3
-}
+variable "instance_count" {}
 
 variable "ssh_key" {
   description = "SSH key name for access to etcd instance"
@@ -40,14 +39,7 @@ variable "ign_ntp_dropin_id" {
   default = ""
 }
 
-variable "tls_enabled" {
-  default = false
-}
-
-# TODO ? not used ?
-variable "etcd_tls_enabledtls_enabled" {
-  default = false
-}
+variable "tls_enabled" {}
 
 #TODO to params
 variable "container_image" {

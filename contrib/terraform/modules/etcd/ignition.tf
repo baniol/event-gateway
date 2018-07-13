@@ -19,8 +19,7 @@ EOF
   --peer-key-file=/etc/ssl/etcd/peer.key \
   --peer-trusted-ca-file=/etc/ssl/etcd/ca.crt \
   --peer-client-cert-auth=true \
-  --trusted-ca-file=/etc/ssl/etcd/ca.crt
-EOF
+  --trusted-ca-file=/etc/ssl/etcd/ca.crtEOF
 }
 
 data "template_file" "etcd_hostname_list" {
@@ -30,32 +29,32 @@ data "template_file" "etcd_hostname_list" {
 }
 
 data "template_file" "etcd_names" {
-  count    = "${var.etcd_count}"
+  count    = "${var.instance_count}"
   template = "${var.cluster_name}-etcd-${count.index}${var.base_domain == "" ? "" : ".${var.base_domain}"}"
 }
 
 data "template_file" "advertise_client_urls" {
-  count    = "${var.etcd_count}"
+  count    = "${var.instance_count}"
   template = "${local.scheme}://${data.template_file.etcd_hostname_list.*.rendered[count.index]}:2379"
 }
 
 data "template_file" "initial_advertise_peer_urls" {
-  count    = "${var.etcd_count}"
+  count    = "${var.instance_count}"
   template = "${local.scheme}://${data.template_file.etcd_hostname_list.*.rendered[count.index]}:2380"
 }
 
 data "template_file" "initial_cluster" {
-  count    = "${length(data.template_file.etcd_hostname_list.*.rendered) > 0 ? var.etcd_count : 0}"
+  count    = "${length(data.template_file.etcd_hostname_list.*.rendered) > 0 ? var.instance_count : 0}"
   template = "${data.template_file.etcd_names.*.rendered[count.index]}=${local.scheme}://${local.etcd_initial_cluster_list[count.index]}:2380"
 }
 
 data "template_file" "etcd" {
-  count    = "${var.etcd_count}"
+  count    = "${var.instance_count}"
   template = "${file("${path.module}/resources/dropins/40-etcd-cluster.conf")}"
 
   vars = {
     advertise_client_urls       = "${data.template_file.advertise_client_urls.*.rendered[count.index]}"
-    cert_options                = "${var.etcd_tls_enabledtls_enabled ? local.cert_options : ""}"
+    cert_options                = "${var.tls_enabled ? local.cert_options : ""}"
     container_image             = "${var.container_image}"
     initial_advertise_peer_urls = "${data.template_file.initial_advertise_peer_urls.*.rendered[count.index]}"
     initial_cluster             = "${length(data.template_file.etcd_hostname_list.*.rendered) > 0 ? format("--initial-cluster=%s", join(",", data.template_file.initial_cluster.*.rendered)) : ""}"
@@ -67,7 +66,7 @@ data "template_file" "etcd" {
 }
 
 data "ignition_systemd_unit" "etcd" {
-  count   = "${var.etcd_count}"
+  count   = "${var.instance_count}"
   name    = "etcd-member.service"
   enabled = true
 

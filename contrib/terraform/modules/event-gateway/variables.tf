@@ -94,3 +94,13 @@ variable "ssh_key" {
   description = ""
   default     = ""
 }
+
+variable "tls_enabled" {
+  description = ""
+  default     = false
+}
+
+variable "etcd_instance_count" {
+  description = ""
+  default     = 3
+}
