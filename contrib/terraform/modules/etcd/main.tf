@@ -1,28 +1,33 @@
+data "aws_caller_identity" "current" {}
+
 module "etcd" {
   source = "github.com/coreos/tectonic-installer//modules/aws/etcd?ref=0a22c73d39f67ba4bb99106a9e72322a47179736"
 
   base_domain = "${var.base_domain}"
 
-  # TODO necessary ?
-  cluster_id              = "tectonic-etcd"
+  cluster_id              = "${var.cluster_name}"
   cluster_name            = "${var.cluster_name}"
   container_image         = "${var.container_image}"
   container_linux_channel = "${var.container_linux_channel}"
   container_linux_version = "${module.container_linux.version}"
   ec2_type                = "${var.ec2_type}"
   external_endpoints      = []
+  extra_tags              = "${var.tags}"
   ign_etcd_crt_id_list    = "${local.etcd_crt_id_list}"
   ign_etcd_dropin_id_list = "${data.ignition_systemd_unit.etcd.*.id}"
   instance_count          = "${var.instance_count}"
   root_volume_iops        = "${var.root_volume_iops}"
   root_volume_size        = "${var.root_volume_size}"
   root_volume_type        = "${var.root_volume_type}"
-  s3_bucket               = "${var.event-gateway-state}"
+  s3_bucket               = "${aws_s3_bucket.eg-etcd-ignition.id}"
   sg_ids                  = "${aws_security_group.etcd.*.id}"
-  ssh_key                 = "${var.ssh_key}"
-  subnets                 = "${var.subnets}"
-  tls_enabled             = "${var.tls_enabled}"
-  extra_tags              = "${var.tags}"
+
+  # TODO generate new ke ?
+  ssh_key = "${var.ssh_key}"
+  subnets = "${var.subnets}"
+
+  # TODO try with enabled
+  tls_enabled = "${var.tls_enabled}"
 }
 
 module "container_linux" {
@@ -30,6 +35,13 @@ module "container_linux" {
 
   release_channel = "stable"
   release_version = "latest"
+}
+
+resource "aws_s3_bucket" "eg-etcd-ignition" {
+  bucket = "${data.aws_caller_identity.current.account_id}-eg-etc-ignition"
+  acl    = "private"
+
+  tags = "${var.tags}"
 }
 
 resource "aws_security_group" "etcd" {
@@ -56,10 +68,11 @@ resource "aws_security_group" "etcd" {
 resource "aws_security_group_rule" "allow_ssh" {
   count = "${var.bastion_enabled ? 1 : 0}"
 
-  type        = "ingress"
-  from_port   = 22
-  to_port     = 22
-  protocol    = "tcp"
+  type      = "ingress"
+  from_port = 22
+  to_port   = 22
+  protocol  = "tcp"
+
   cidr_blocks = ["0.0.0.0/0"]
 
   security_group_id = "${aws_security_group.etcd.id}"

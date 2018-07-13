@@ -1,31 +1,21 @@
 #TODO - remove?
 variable "aws_region" {
-  description = "AWS region to the stack"
-  default     = "us-east-1"
+  default = "us-east-1"
 }
 
 variable "command_list" {
-  type    = "list"
-  default = ["-log-level", "debug"]
-}
-
-variable "public_subnets_count" {
-  description = "Number of public subnets"
-  default     = 2
-}
-
-variable "private_subnets_count" {
-  description = "Number of private subnets"
-  default     = 3
+  description = "List of parameters for the `event-gateway` command"
+  type        = "list"
+  default     = ["-log-level", "debug"]
 }
 
 variable "eg_image" {
-  description = "Event gateway docker image"
+  description = "Event Gateway docker image"
   default     = "serverless/event-gateway:latest"
 }
 
 variable "events_port" {
-  description = "Port number of the Event Gateway Events API"
+  description = "Event Gateway Events API port number"
   default     = 4000
 }
 
@@ -34,8 +24,8 @@ variable "config_port" {
   default     = 4001
 }
 
-variable "app_count" {
-  description = "Number of Event Gateway docker containers"
+variable "task_count" {
+  description = "Number of Event Gateway Fargate tasks"
   default     = 3
 }
 
@@ -60,25 +50,47 @@ variable "etcd_instance_type" {
 }
 
 variable "tags" {
-  type    = "map"
-  default = {}
+  description = "Additional tags"
+  type        = "map"
+  default     = {}
 }
 
 variable "events_alb_name" {
-  description = ""
+  description = "Events ALB name"
   default     = "alb-events"
 }
 
 variable "config_alb_name" {
-  description = ""
+  description = "Config ALB name"
   default     = "alb-config"
 }
 
 variable "eg_vpc_name" {
-  description = ""
+  description = "Event Gateway VPC name"
   default     = "eg-vpc"
 }
 
 variable "bastion_enabled" {
-  default = false
+  description = "Set to true enables SSH access to etcd nodes in the private subnet"
+  default     = false
+}
+
+variable "root_volume_iops" {
+  description = "xxx"
+  default     = "100"
+}
+
+variable "root_volume_size" {
+  description = ""
+  default     = "30"
+}
+
+variable "root_volume_type" {
+  description = ""
+  default     = "gp2"
+}
+
+variable "ssh_key" {
+  description = ""
+  default     = ""
 }

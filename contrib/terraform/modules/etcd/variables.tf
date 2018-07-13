@@ -4,9 +4,8 @@ variable "cluster_name" {
 
 variable "security_groups" {
   description = ""
-  type = "list"
+  type        = "list"
 }
-
 
 variable "vpc_id" {
   description = ""
@@ -45,10 +44,12 @@ variable "tls_enabled" {
   default = false
 }
 
+# TODO ? not used ?
 variable "etcd_tls_enabledtls_enabled" {
   default = false
 }
 
+#TODO to params
 variable "container_image" {
   default = "quay.io/coreos/etcd:v3.1.8"
 }
@@ -57,17 +58,11 @@ variable "use_metadata" {
   default = false
 }
 
-variable "root_volume_iops" {
-  default = "100"
-}
+variable "root_volume_iops" {}
 
-variable "root_volume_size" {
-  default = "30"
-}
+variable "root_volume_size" {}
 
-variable "root_volume_type" {
-  default = "gp2"
-}
+variable "root_volume_type" {}
 
 variable "event-gateway-state" {
   default = "event-gateway-state"
@@ -85,4 +80,8 @@ variable "bastion_enabled" {
 variable "bastion_subnet" {
   description = "..."
   default     = 0
+}
+
+variable "bastion_name" {
+  default = "eg-etcd-bastion"
 }

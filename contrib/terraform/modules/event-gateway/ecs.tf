@@ -52,7 +52,7 @@ resource "aws_ecs_service" "config" {
   name            = "eg-config"
   cluster         = "${aws_ecs_cluster.event-gateway.id}"
   task_definition = "${aws_ecs_task_definition.eg.arn}"
-  desired_count   = "${var.app_count}"
+  desired_count   = "${var.task_count}"
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -75,7 +75,7 @@ resource "aws_ecs_service" "events" {
   name            = "eg-events"
   cluster         = "${aws_ecs_cluster.event-gateway.id}"
   task_definition = "${aws_ecs_task_definition.eg.arn}"
-  desired_count   = "${var.app_count}"
+  desired_count   = "${var.task_count}"
   launch_type     = "FARGATE"
 
   network_configuration {

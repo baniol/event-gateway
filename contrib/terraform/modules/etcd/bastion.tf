@@ -17,7 +17,6 @@ data "aws_ami" "amazon-linux" {
   }
 }
 
-# TODO ssh sg
 resource "aws_instance" "bastion" {
   count = "${var.bastion_enabled ? 1 : 0}"
 
@@ -27,10 +26,9 @@ resource "aws_instance" "bastion" {
   subnet_id              = "${var.bastion_subnet}"
   vpc_security_group_ids = ["${aws_security_group.bastion.id}"]
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, map("Name", var.bastion_name))}"
 }
 
-#TODO instance storage?
 resource "aws_security_group" "bastion" {
   count = "${var.bastion_enabled ? 1 : 0}"
 
