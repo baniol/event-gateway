@@ -20,7 +20,7 @@ module "etcd" {
   ec2_type                = "${var.ec2_type}"
   external_endpoints      = []
   extra_tags              = "${var.tags}"
-  ign_etcd_crt_id_list    = []                                        # "${local.etcd_crt_id_list}"
+  ign_etcd_crt_id_list    = "${local.etcd_crt_id_list}"
   ign_etcd_dropin_id_list = "${data.ignition_systemd_unit.etcd.*.id}"
   instance_count          = "${var.instance_count}"
   root_volume_iops        = "${var.root_volume_iops}"
@@ -33,16 +33,16 @@ module "etcd" {
   tls_enabled             = "${var.tls_enabled}"
 }
 
-# module "etcd_certs" {
-#   source = "github.com/coreos/tectonic-installer//modules/tls/etcd/signed?ref=0a22c73d39f67ba4bb99106a9e72322a47179736"
+module "etcd_certs" {
+  source = "github.com/coreos/tectonic-installer//modules/tls/etcd/signed?ref=0a22c73d39f67ba4bb99106a9e72322a47179736"
 
-#   etcd_ca_cert_path     = "/dev/null"
-#   etcd_cert_dns_names   = "${data.template_file.etcd_hostname_list.*.rendered}"
-#   etcd_client_cert_path = "/dev/null"
-#   etcd_client_key_path  = "/dev/null"
-#   self_signed           = "true"
-#   service_cidr          = "10.3.0.0/16"
-# }
+  etcd_ca_cert_path     = "/dev/null"
+  etcd_cert_dns_names   = "${data.template_file.etcd_hostname_list.*.rendered}"
+  etcd_client_cert_path = "/dev/null"
+  etcd_client_key_path  = "/dev/null"
+  self_signed           = "true"
+  service_cidr          = "10.3.0.0/16"
+}
 
 resource "aws_s3_bucket" "eg-etcd-ignition" {
   bucket = "${data.aws_caller_identity.current.account_id}-eg-etc-ignition"
