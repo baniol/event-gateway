@@ -9,7 +9,7 @@
 * tls https://coreos.com/etcd/docs/latest/op-guide/security.html, https://coreos.com/etcd/docs/latest/etcd-live-http-to-https-migration.html
 * create bucket with enc /Users/marcin.baniowski/Projects/devops/tectonic-installer/modules/aws/etcd/ignition_s3.tf
 * libkv store does not initialize with tls config (main.go)
-* switch off certs creation
+* switch off certs creation - commented out
 * run with remote url (priv repo)
 * licence - notice
 

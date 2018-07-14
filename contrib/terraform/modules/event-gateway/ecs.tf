@@ -9,9 +9,6 @@ resource "aws_cloudwatch_log_group" "eg" {
   tags = "${var.tags}"
 }
 
-# TODO
-# "command": ["-db-hosts", "${module.etcd.etcd_clients}", "-log-level", "${var.log_level}"],
-
 resource "aws_ecs_task_definition" "eg" {
   family                   = "eg"
   network_mode             = "awsvpc"

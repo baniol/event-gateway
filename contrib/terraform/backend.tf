@@ -1,7 +1,8 @@
-terraform {
-  backend "s3" {
-    bucket = "event-gateway-state"
-    key    = "event-gateway"
-    region = "us-east-1"
-  }
-}
+# terraform {
+#   backend "s3" {
+#     bucket = "event-gateway-state"
+#     key    = "event-gateway"
+#     region = "us-east-1"
+#   }
+# }
+
