@@ -4,51 +4,31 @@ variable "cluster_name" {
 }
 
 variable "security_groups" {
-  description = ""
-  type        = "list"
+  type = "list"
 }
 
-variable "vpc_id" {
-  description = ""
-}
+variable "vpc_id" {}
 
-variable "base_domain" {
-  default = "etcd"
-}
+variable "base_domain" {}
 
 variable "instance_count" {}
 
-variable "ssh_key" {
-  description = "SSH key name for access to etcd instance"
-}
+variable "ssh_key" {}
 
 variable "subnets" {
-  description = "Subnets for hosting etcd instances"
-  type        = "list"
+  type = "list"
 }
 
 variable "container_linux_channel" {
   default = "stable"
 }
 
-variable "ec2_type" {
-  default = "t2.micro"
-}
-
-variable "ign_ntp_dropin_id" {
-  default = ""
-}
+variable "ec2_type" {}
 
 variable "tls_enabled" {}
 
 #TODO to params
-variable "container_image" {
-  default = "quay.io/coreos/etcd:v3.1.8"
-}
-
-variable "use_metadata" {
-  default = false
-}
+variable "container_image" {}
 
 variable "root_volume_iops" {}
 
@@ -56,24 +36,20 @@ variable "root_volume_size" {}
 
 variable "root_volume_type" {}
 
-variable "event-gateway-state" {
-  default = "event-gateway-state"
-}
-
 variable "tags" {
-  type    = "map"
-  default = {}
+  type = "map"
 }
 
-variable "bastion_enabled" {
-  default = false
-}
+variable "bastion_enabled" {}
 
 variable "bastion_subnet" {
-  description = "..."
-  default     = 0
+  default = 0
 }
 
 variable "bastion_name" {
   default = "eg-etcd-bastion"
+}
+
+variable "use_metadata" {
+  default = false
 }

@@ -95,12 +95,21 @@ variable "ssh_key" {
   default     = ""
 }
 
-variable "tls_enabled" {
+variable "etcd_tls_enabled" {
   description = ""
   default     = false
+}
+
+variable "etcd_image" {
+  description = "etcd Docker image"
+  default     = "quay.io/coreos/etcd:v3.1.8"
 }
 
 variable "etcd_instance_count" {
   description = ""
   default     = 3
+}
+
+variable "etcd_base_domain" {
+  default = "etcd"
 }

@@ -11,5 +11,6 @@
 * libkv store does not initialize with tls config (main.go)
 * switch off certs creation
 * run with remote url (priv repo)
+* licence - notice
 
 sudo ETCDCTL_API=3 etcdctl --cacert=/etc/ssl/etcd/ca.crt --cert=/etc/ssl/etcd/client.crt --key=/etc/ssl/etcd/client.key --endpoints=https://event-gateway-etcd-0.etcd:2379,https://event-gateway-etcd-1.etcd:2379,https://event-gateway-etcd-2.etcd:2379 endpoint health
