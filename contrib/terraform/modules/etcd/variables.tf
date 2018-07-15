@@ -28,11 +28,11 @@ variable "tls_enabled" {}
 
 variable "container_image" {}
 
-variable "etcd_root_volume_iops" {}
+variable "root_volume_iops" {}
 
-variable "etcd_root_volume_size" {}
+variable "root_volume_size" {}
 
-variable "etcd_root_volume_type" {}
+variable "root_volume_type" {}
 
 variable "tags" {
   type = "map"
