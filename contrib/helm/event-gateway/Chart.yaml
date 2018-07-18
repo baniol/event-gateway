@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Event Gateway
+name: event-gateway
+version: 0.1.0
